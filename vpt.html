@@ -91,9 +91,10 @@
           </div>
 
         <script>
-            const file = new File(['foo'], 'note.txt', {
-                type: 'text/plain',
-            })
+            //const file = new File(['foo'], 'note.txt', {
+            //    type: 'text/plain',
+            //})
+            var file
             var timeContainter = document.getElementById('cont');
             var buckets = []
             var thingCount = 0
@@ -103,7 +104,7 @@
             var outfile = ""
 
             videoInput.addEventListener('change', function(e) {
-                const file = e.target.files[0];
+                file = e.target.files[0];
                 console.log(file);
                 if (file) {
                     const reader = new FileReader();
@@ -162,6 +163,7 @@
                     timeContainter.appendChild(newTime);
                     buckets.push( {id: divIdName, tStamp: thisTime, fieldID: "F"+thingCount} );
                     thingCount++;
+                    sortDiv();
                 }
             }
 
@@ -174,6 +176,46 @@
             function goSeek(thetime){
                 myVideo.currentTime = thetime;
             }
+
+            function download(filename, text) {
+                var element = document.createElement('a');
+                element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+                element.setAttribute('download', filename);
+
+                element.style.display = 'none';
+                document.body.appendChild(element);
+
+                element.click();
+
+                document.body.removeChild(element);
+            }
+
+            function sortDiv() {
+                var mainDiv = document.getElementById("cont");
+                var divs = mainDiv.children;
+
+                Array.from(divs).sort((a,b) => parseFloat(a.id.substring(3)) > parseFloat(b.id.substring(3)) ? 1 : -1).forEach(ele => {
+                    mainDiv.appendChild(ele);
+                });
+            };
+
+            function saveit() {
+                var mainDiv = document.getElementById("cont");
+                console.log(mainDiv)
+                var divs = mainDiv.childNodes;
+                var dmxfile = [];
+                console.log(divs)
+                divs.forEach(function(item) {
+                    codeStr = item.children[1].value;
+                    tstamp = (item.id).substring(3);
+                    dmxfile.push( {time_sec: tstamp, tag: codeStr} )
+                });
+                finalOut = {filename:file.name,timedata: dmxfile}
+                console.log(JSON.stringify(finalOut));
+                download(outfile, JSON.stringify(finalOut))
+            }
+
+
         </script>
     </body>
 </html>
