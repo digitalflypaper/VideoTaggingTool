@@ -107,15 +107,36 @@
                 file = e.target.files[0];
                 console.log(file);
                 if (file) {
+
+                    outfile = file.name.replace(new RegExp('.mp4', 'gi'), ".dmx");
+                    theNewName.innerHTML = " Creating Timing File: <b>"+outfile + "</b>";
+                    
+                    const URL = window.URL || window.webkitURL;
+                    myVideo.src = URL.createObjectURL(file);
+                    myVideo.load();
+                    timeContainter.textContent = '';
+/*
                     const reader = new FileReader();
 
                     outfile = file.name.replace(new RegExp('.mp4', 'gi'), ".dmx");
                     theNewName.innerHTML = " Creating Timing File: <b>"+outfile + "</b>";
                     reader.onload = function(e) {
-                        myVideo.src = e.target.result;
-                    };
+                        // The file reader gives us an ArrayBuffer:
+                        let buffer = e.target.result;
+
+                        // We have to convert the buffer to a blob:
+                        let videoBlob = new Blob([new Uint8Array(buffer)], { type: 'video/mp4' });
+
+                        // The blob gives us a URL to the video file:
+                        let url = window.URL.createObjectURL(videoBlob);
+
+                        myVideo.src = url;
+
+                        timeContainter.textContent = '';
+                    }
 
                     reader.readAsDataURL(file);
+*/
                 }
             });
 
